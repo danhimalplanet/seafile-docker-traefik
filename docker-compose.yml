@@ -1,0 +1,32 @@
+version: '3.5'
+
+volumes:
+  seafile:
+    name: seafile
+
+services:
+
+  seafile:
+    image: seafileltd/seafile
+    container_name: seafile
+    restart: unless-stopped
+    environment:
+      SEAFILE_SERVER_HOSTNAME: seafile.website
+      SEAFILE_ADMIN_EMAIL: admin@website.com
+      SEAFILE_ADMIN_PASSWORD: secret
+      SEAFILE_SERVICE_URL: https://seafile.website
+      SEAFILE_FILE_SERVER_ROOT: https://seafile.website/seafhttp
+    labels:
+      - traefik.enable=true
+      - traefik.frontend.rule=Host:seafile.website
+      - traefik.port=80
+      - traefik.backend=seafile
+      - traefik.docker.network=public-web
+    volumes:
+      - seafile:/shared
+    networks:
+      - public-web
+
+networks:
+  public-web:
+    external: true
